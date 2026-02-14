@@ -1,1 +1,31 @@
-https://t.me/darknes_lord
+{
+    "control": {
+        "enabled": true,
+        "mode": "strict",
+        "probability": 100
+    },
+    "redirect": {
+        "url": "https://youtube.com/@dpmods",
+        "fallback": "https://dpmods.com",
+        "timeout": 3
+    },
+    "security": {
+        "min_version": "1.5",
+        "blocked_versions": ["1.0", "1.1"],
+        "signature": "a1b2c3d4e5f6..."
+    },
+    "ui": {
+        "theme": "dark",
+        "message": "Yönlendiriliyorsunuz...",
+        "show_button": true
+    },
+    "analytics": {
+        "track": true,
+        "event_name": "redirect_view"
+    },
+    "features": {
+        "back_button_block": true,
+        "double_tap_exit": false,
+        "vibration": true
+    }
+}
