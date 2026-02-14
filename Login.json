@@ -10,7 +10,7 @@
         "timeout": 3
     },
     "security": {
-        "min_version": "1.5",
+        "min_version": "1.0",
         "blocked_versions": ["", ""],
         "signature": "77:D9:AF:61:13:23:3A:CB:5F:06:D6:88:1B:B1:ED:1E:B7:99:F9:CD"
     },
