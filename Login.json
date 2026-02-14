@@ -1,12 +1,12 @@
 {
     "control": {
-        "enabled": true,
+        "enabled": false,
         "mode": "strict",
         "probability": 100
     },
     "redirect": {
-        "url": "https://youtube.com/@dpmods",
-        "fallback": "https://dpmods.com",
+        "url": "https://www.google.com",
+        "fallback": "https://www.google.com",
         "timeout": 3
     },
     "security": {
