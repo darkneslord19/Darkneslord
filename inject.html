@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Smali Regex Enjektör · onCreate tespit</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0b1525;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, Helvetica, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 12px 10px;
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .phone-card {
+            width: 100%;
+            max-width: 520px;
+            background: #11223a;
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(80, 140, 240, 0.2) inset;
+            overflow: hidden;
+            border: 1px solid #2a4070;
+        }
+
+        .header {
+            background: #0f1b30;
+            padding: 24px 18px 16px 18px;
+            border-bottom: 1px solid #2f4b78;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(145deg, #c0e0ff, #9bc0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .header h1 span {
+            font-size: 1.2rem;
+            background: #1f3450;
+            padding: 6px 14px;
+            border-radius: 50px;
+            border: 1px solid #3e6bb0;
+            color: #b8d6ff;
+            font-weight: 500;
+        }
+
+        .sub {
+            color: #a5c0dd;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            background: #1e2f4a70;
+            border-radius: 40px;
+            display: inline-block;
+            border-left: 3px solid #4f8ad4;
+        }
+
+        .content {
+            padding: 18px 16px 22px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .section {
+            background: #0e1a2b;
+            border-radius: 28px;
+            padding: 18px 14px;
+            border: 1px solid #253e62;
+            box-shadow: 0 6px 10px #00000040;
+        }
+
+        .section-title {
+            color: #c6dcff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed #365a88;
+            padding-bottom: 8px;
+        }
+
+        .section-title i {
+            font-style: normal;
+            font-size: 1.4rem;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            background: #1c2f48;
+            border-radius: 60px;
+            border: 1px solid #34588a;
+            margin-bottom: 16px;
+            min-height: 56px;
+        }
+
+        .file-btn {
+            background: #264c7a;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 14px 22px;
+            border-radius: 60px;
+            cursor: pointer;
+            flex-shrink: 0;
+            border: 1px solid #6392d0;
+            letter-spacing: 0.3px;
+            transition: 0.1s;
+            box-shadow: 0 4px 6px black;
+        }
+
+        .file-btn:active {
+            background: #1e3f64;
+            transform: scale(0.97);
+        }
+
+        .file-name {
+            flex: 1;
+            padding: 0 16px;
+            color: #b5d0f0;
+            font-size: 0.9rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 10px;
+        }
+
+        .chip {
+            background: #1d3450;
+            border: 1px solid #3f6190;
+            color: #c6dcff;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chip-success {
+            background: #1d4a3a;
+            border-color: #319f6d;
+            color: #d0f0d0;
+        }
+
+        .chip-warn {
+            background: #4f3a1c;
+            border-color: #c09a40;
+            color: #ffdfa0;
+        }
+
+        .preview-box {
+            background: #030c18;
+            border-radius: 24px;
+            padding: 14px;
+            border: 1px solid #2d4980;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #d3e3ff;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 10px 0 8px;
+            box-shadow: inset 0 0 10px #00000070;
+        }
+
+        .regex-box {
+            background: #14273f;
+            border-radius: 18px;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #ffd966;
+            border: 1px solid #4f7cb0;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .regex-box span {
+            color: #a5d0ff;
+            font-family: inherit;
+        }
+
+        .mobile-textarea {
+            width: 100%;
+            background: #030f1f;
+            border: 1px solid #345f9b;
+            border-radius: 26px;
+            padding: 18px 16px;
+            color: #e0f0ff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            min-height: 150px;
+            resize: vertical;
+            outline: none;
+            margin: 6px 0 12px;
+            box-shadow: 0 0 0 1px #25487a inset;
+        }
+
+        .info-note {
+            background: #14273f;
+            padding: 14px 16px;
+            border-radius: 22px;
+            color: #bfd6ff;
+            font-size: 0.9rem;
+            border-left: 5px solid #3a7bcb;
+            margin: 10px 0 5px;
+        }
+
+        .info-note i {
+            font-style: normal;
+            background: #1e3b60;
+            padding: 3px 10px;
+            border-radius: 30px;
+            color: #fee5a8;
+        }
+
+        .action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 6px;
+        }
+
+        .action-btn {
+            flex: 1 1 120px;
+            background: #1d3452;
+            border: 1px solid #416ba3;
+            color: #e1efff;
+            padding: 16px 8px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 5px 0 #0b1625;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0b1625;
+            background: #264573;
+        }
+
+        .btn-primary {
+            background: #0f3d7a;
+            border-color: #6d9ef0;
+            box-shadow: 0 5px 0 #08203b;
+        }
+
+        .btn-success {
+            background: #1f6d4a;
+            border-color: #4dbf8f;
+        }
+
+        .message {
+            background: #2f384b;
+            border-radius: 60px;
+            padding: 14px 20px;
+            color: #e4f0ff;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #5d82b0;
+            margin-top: 16px;
+        }
+
+        .message.error {
+            background: #622b2b;
+            border-color: #c97a7a;
+        }
+
+        .message.success {
+            background: #1b553b;
+            border-color: #53c28b;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 18px 12px 14px;
+            color: #5f7aa8;
+            font-size: 0.8rem;
+            border-top: 1px solid #1e3452;
+        }
+    </style>
+</head>
+<body>
+<div class="phone-card">
+    <div class="header">
+        <h1>
+            ☕ SmaliCE
+            <span>regex+</span>
+        </h1>
+        <div class="sub">onCreate enjektör · anlık tespit</div>
+    </div>
+
+    <div class="content">
+        <!-- Regex bilgi paneli -->
+        <div class="regex-box">
+            <span>🔍 MATCH:</span> .method (.+) onCreate\(Landroid/os/Bundle;\)V\n    \.registers (\d+)<br>
+            <span>📍 REPLACE:</span> .method ${GROUP1} onCreate(Landroid/os/Bundle;)V\n    .registers ${GROUP2}\n\n       [ENJEKTE KOD]
+        </div>
+
+        <!-- 1. Smali yükleme - ANLIK TESPİT ÖZELLİKLİ -->
+        <div class="section">
+            <div class="section-title"><i>📁</i> 1. Smali dosyası</div>
+            <div class="file-row">
+                <button class="file-btn" id="mobileFileBtn">Dosya seç</button>
+                <div class="file-name" id="mobileFileName">MainActivity.smali</div>
+                <input type="file" id="mobileFileInput" accept=".smali" style="display: none;">
+            </div>
+            
+            <!-- CANLI TESPİT ETİKETLERİ - yeşil ✅ ile -->
+            <div class="chip-group">
+                <span class="chip" id="onCreateChip">⏳ taranıyor...</span>
+                <span class="chip" id="registersChip">🔢 registers: ?</span>
+                <span class="chip" id="methodLineChip">📍 metod: ?</span>
+            </div>
+            
+            <!-- Metod önizleme -->
+            <div style="font-size:0.9rem; color:#9bb5de; margin-bottom:4px;">📄 onCreate metodu (tespit edilen)</div>
+            <div class="preview-box" id="mobilePreview">Dosya yükleyin veya örnek kullanın</div>
+            
+            <!-- Eğer onCreate yoksa burada uyarı gösterilecek -->
+            <div id="onCreateWarning" style="display: none; background: #4f3a1c; border-radius: 18px; padding: 10px; color: #ffdfa0; margin-top: 8px; text-align: center;">
+                ⚠️ UYARI: Dosyada onCreate metodu bulunamadı!
+            </div>
+        </div>
+
+        <!-- 2. Enjekte edilecek kod -->
+        <div class="section">
+            <div class="section-title"><i>💉</i> 2. Enjeksiyon kodu</div>
+            <textarea class="mobile-textarea" id="mobileInjectCode" placeholder="; Buraya yazacağınız kod, .registers satırından SONRA eklenecek">const-string v0, "✅ REGEX INJECT"
+invoke-static {v0, v0}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+</textarea>
+            <div class="info-note">
+                💡 <i>.registers</i> değeri korunur, sizin kodunuz hemen altına eklenir.
+            </div>
+        </div>
+
+        <!-- 3. Çıktı -->
+        <div class="section">
+            <div class="section-title"><i>⚙️</i> 3. Enjekte edilmiş metod</div>
+            <div class="chip-group">
+                <span class="chip" id="statsMobile">📊 registers korundu</span>
+                <span class="chip" id="lineCount">📏 ? satır</span>
+            </div>
+            <div class="preview-box" id="mobileOutput" style="max-height: 220px;">Enjekle butonuna basın</div>
+
+            <div class="action-grid">
+                <button class="action-btn btn-primary" id="mobileInjectBtn">🔨 Regex Enjekle</button>
+                <button class="action-btn" id="mobileCopyBtn">📋 Kopyala</button>
+                <button class="action-btn btn-success" id="mobileDownloadBtn">⬇️ İndir</button>
+            </div>
+        </div>
+
+        <div class="message" id="mobileMessage"></div>
+    </div>
+
+    <div class="footer">
+        ⚠️ Regex eşleşmesi: .method + onCreate + .registers · Anlık tespit yeşil ✅ etiketiyle
+    </div>
+</div>
+
+<script>
+    (function() {
+        const fileBtn = document.getElementById('mobileFileBtn');
+        const fileInput = document.getElementById('mobileFileInput');
+        const fileNameDiv = document.getElementById('mobileFileName');
+        const onCreateChip = document.getElementById('onCreateChip');
+        const registersChip = document.getElementById('registersChip');
+        const methodLineChip = document.getElementById('methodLineChip');
+        const mobilePreview = document.getElementById('mobilePreview');
+        const injectCode = document.getElementById('mobileInjectCode');
+        const outputPre = document.getElementById('mobileOutput');
+        const injectBtn = document.getElementById('mobileInjectBtn');
+        const copyBtn = document.getElementById('mobileCopyBtn');
+        const downloadBtn = document.getElementById('mobileDownloadBtn');
+        const statsMobile = document.getElementById('statsMobile');
+        const lineCountSpan = document.getElementById('lineCount');
+        const messageDiv = document.getElementById('mobileMessage');
+        const onCreateWarning = document.getElementById('onCreateWarning');
+
+        // State - regex eşleşme sonuçlarını tut
+        let currentSmali = '';
+        let onCreateMethodLine = '';      // .method ... onCreate satırı
+        let registersLine = '';            // .registers N satırı
+        let registersValue = 0;
+        let methodAccessModifier = '';     // public, protected vb.
+        let onCreateStartLineIndex = -1;
+        let registersLineIndex = -1;
+        let methodEndLineIndex = -1;
+
+        // Örnek smali (tam regex eşleşmesi için)
+        const dummySmali = `.class public Lcom/example/MainActivity;
+.super Landroidx/appcompat/app/AppCompatActivity;
+
+.method protected onCreate(Landroid/os/Bundle;)V
+    .registers 3
+    invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
+    const v0, 0x7f0b001c
+    invoke-virtual {p0, v0}, Lcom/example/MainActivity;->setContentView(I)V
+    return-void
+.end method
+
+.method public onResume()V
+    .registers 1
+    return-void
+.end method`;
+
+        // İlk yükleme
+        function loadDummy() {
+            parseWithRegex(dummySmali);
+            fileNameDiv.innerText = 'MainActivity.smali';
+        }
+        loadDummy();
+
+        fileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            fileNameDiv.innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => parseWithRegex(ev.target.result);
+            reader.readAsText(file);
+        });
+
+        // Regex ile tam eşleşme - GELİŞTİRİLMİŞ TESPİT
+        function parseWithRegex(fullText) {
+            currentSmali = fullText;
+            const lines = fullText.split(/\r?\n/);
+            
+            // Regex: .method (.*) onCreate\(Landroid/os/Bundle;\)V
+            // ardından bir sonraki satırda .registers (\d+)
+            let found = false;
+            
+            // Önce tüm satırları göster (debug)
+            console.log('Dosya satır sayısı:', lines.length);
+            
+            for (let i = 0; i < lines.length - 1; i++) {
+                const currentLine = lines[i].trim();
+                // Daha esnek regex: .method ile başlayan ve onCreate içeren
+                if (currentLine.includes('.method') && currentLine.includes('onCreate') && currentLine.includes('Landroid/os/Bundle;')) {
+                    // .method satırı bulundu, sonraki satır .registers mı?
+                    const nextLine = lines[i + 1].trim();
+                    if (nextLine.startsWith('.registers') || nextLine.startsWith('.locals')) {
+                        // .registers veya .locals olabilir
+                        const registersMatch = nextLine.match(/^\.(?:registers|locals)\s+(\d+)$/);
+                        if (registersMatch) {
+                            found = true;
+                            onCreateStartLineIndex = i;
+                            registersLineIndex = i + 1;
+                            
+                            // Access modifier'ı ayıkla (protected, public vs)
+                            const methodMatch = currentLine.match(/^\.method\s+(.+)\s+onCreate\(/);
+                            if (methodMatch) {
+                                methodAccessModifier = methodMatch[1];
+                            } else {
+                                methodAccessModifier = "unknown";
+                            }
+                            
+                            registersValue = parseInt(registersMatch[1], 10);
+                            onCreateMethodLine = lines[i];
+                            registersLine = lines[i + 1];
+                            
+                            // .end method bul
+                            for (let j = i + 2; j < lines.length; j++) {
+                                if (lines[j].trim() === '.end method') {
+                                    methodEndLineIndex = j;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Tespit sonuçlarına göre etiketleri güncelle
+            if (!found) {
+                // onCreate YOK - kırmızı etiket ve uyarı göster
+                onCreateChip.innerHTML = '❌ onCreate YOK';
+                onCreateChip.style.background = '#622b2b';
+                onCreateChip.style.borderColor = '#c97a7a';
+                onCreateChip.style.color = '#ffc0c0';
+                
+                registersChip.innerHTML = '🔢 -';
+                methodLineChip.innerHTML = '📍 bulunamadı';
+                
+                // Uyarı mesajını göster
+                onCreateWarning.style.display = 'block';
+                
+                // Preview'da dosyanın başını göster
+                mobilePreview.innerText = lines.slice(0, 8).join('\n') + '\n...\n⚠️ onCreate metodu bulunamadı!';
+                
+                // Output'u temizle
+                outputPre.innerText = '// onCreate metodu bulunamadı\n// Dosyada .method ... onCreate(Landroid/os/Bundle;)V\n// ve ardından .registers satırı aranıyor.';
+                
+                showMsg('onCreate metodu bulunamadı!', 'error');
+                return;
+            }
+
+            // onCreate VAR - yeşil etiket göster
+            onCreateChip.innerHTML = '✅ onCreate VAR';
+            onCreateChip.style.background = '#1d4a3a';
+            onCreateChip.style.borderColor = '#319f6d';
+            onCreateChip.style.color = '#d0f0d0';
+            
+            registersChip.innerHTML = `🔢 registers: ${registersValue}`;
+            methodLineChip.innerHTML = `📍 ${methodAccessModifier}`;
+            
+            // Uyarı mesajını gizle
+            onCreateWarning.style.display = 'none';
+            
+            // onCreate metodunun tamamını preview'da göster
+            const endIdx = methodEndLineIndex !== -1 ? methodEndLineIndex : lines.length - 1;
+            const methodLines = lines.slice(onCreateStartLineIndex, endIdx + 1);
+            mobilePreview.innerText = methodLines.join('\n');
+            
+            // Output'u güncelle
+            updateOutput(injectCode.value);
+            
+            showMsg('✅ onCreate başarıyla tespit edildi!', 'success');
+        }
+
+        // Enjeksiyon: .registers satırından sonra ekle
+        function injectWithRegex(injectText) {
+            if (onCreateStartLineIndex === -1 || registersLineIndex === -1 || methodEndLineIndex === -1) {
+                showMsg('Önce geçerli bir smali yükleyin', 'error');
+                return null;
+            }
+
+            const lines = currentSmali.split(/\r?\n/);
+            
+            // Enjeksiyon yapılacak satırlar: .registers satırından sonra, metodun geri kalanından önce
+            const beforeRegisters = lines.slice(0, registersLineIndex + 1); // .registers dahil
+            const afterRegisters = lines.slice(registersLineIndex + 1, methodEndLineIndex); // .registers sonrası .end method'a kadar
+            const endMethodLine = lines[methodEndLineIndex];
+            const afterMethod = lines.slice(methodEndLineIndex + 1);
+
+            // Inject satırlarını hazırla (her satırın başında 4 boşluk olmalı)
+            let injectLines = injectText.split(/\r?\n/).filter(l => l.trim() !== '');
+            if (injectLines.length === 0) {
+                injectLines = ['# boş enjeksiyon'];
+            }
+            
+            // Satırların başına 4 boşluk ekle (eğer yoksa)
+            const formattedInject = injectLines.map(l => {
+                if (l.startsWith('    ')) return l;
+                return '    ' + l;
+            });
+
+            // Yeni metod: beforeRegisters + formattedInject + afterRegisters + endMethodLine
+            const newMethodLines = [
+                ...beforeRegisters,
+                ...formattedInject,
+                ...afterRegisters,
+                endMethodLine
+            ];
+
+            // Tüm dosyayı yeniden oluştur (sadece onCreate değişti)
+            const newSmali = [
+                ...lines.slice(0, onCreateStartLineIndex),
+                ...newMethodLines,
+                ...afterMethod
+            ].join('\n');
+
+            // İstatistik
+            statsMobile.innerText = `📊 registers ${registersValue} (korundu)`;
+            lineCountSpan.innerText = `📏 ${newMethodLines.length} satır`;
+
+            // Sadece onCreate metodunu döndür (output için)
+            return newMethodLines.join('\n');
+        }
+
+        function updateOutput(injectCodeText) {
+            const injected = injectWithRegex(injectCodeText);
+            if (injected) {
+                outputPre.innerText = injected;
+            }
+        }
+
+        // Enjekle butonu
+        injectBtn.addEventListener('click', () => {
+            if (onCreateStartLineIndex === -1) {
+                showMsg('Önce onCreate içeren bir smali yükleyin!', 'error');
+                return;
+            }
+            const code = injectCode.value;
+            const res = injectWithRegex(code);
+            if (res) {
+                outputPre.innerText = res;
+                showMsg('✅ Enjeksiyon tamam! .registers sonrasına eklendi', 'success');
+            }
+        });
+
+        // Kopyala
+        copyBtn.addEventListener('click', async () => {
+            const text = outputPre.innerText;
+            if (!text || text.includes('bulunamadı')) {
+                showMsg('Kopyalanacak içerik yok', 'error');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(text);
+                showMsg('📋 Kopyalandı', 'success');
+            } catch {
+                showMsg('Kopyalama başarısız', 'error');
+            }
+        });
+
+        // İndir
+        downloadBtn.addEventListener('click', () => {
+            if (!currentSmali || onCreateStartLineIndex === -1) {
+                showMsg('Geçerli smali yok', 'error');
+                return;
+            }
+            
+            const newOnCreate = outputPre.innerText;
+            if (!newOnCreate || newOnCreate.includes('bulunamadı')) {
+                showMsg('Önce başarılı bir enjeksiyon yapın', 'warning');
+                return;
+            }
+
+            // Tüm dosyayı yeniden oluştur
+            const lines = currentSmali.split(/\r?\n/);
+            
+            // Enjekte edilmiş onCreate satırlarını al
+            const newOnCreateLines = newOnCreate.split(/\r?\n/);
+            
+            // Dosyayı birleştir
+            const updatedSmali = [
+                ...lines.slice(0, onCreateStartLineIndex),
+                ...newOnCreateLines,
+                ...lines.slice(methodEndLineIndex + 1)
+            ].join('\n');
+
+            const blob = new Blob([updatedSmali], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileNameDiv.innerText.replace(/\.smali$/,'') + '_injected.smali';
+            a.click();
+            URL.revokeObjectURL(url);
+            showMsg('📁 İndirildi', 'success');
+        });
+
+        function showMsg(text, type = 'info') {
+            messageDiv.style.display = 'flex';
+            messageDiv.innerText = '🔔 ' + text;
+            messageDiv.className = 'message';
+            if (type === 'error') messageDiv.classList.add('error');
+            else if (type === 'success') messageDiv.classList.add('success');
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+    })();
+</script>
+</body>
+</html>
