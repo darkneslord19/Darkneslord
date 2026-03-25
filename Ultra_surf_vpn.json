@@ -1,12 +1,11 @@
 {
   "ShowDate": "22/12/25",
-  "Title": "GÃ¼ncelleme Var",
-  "Subtitle": "v4.5 â¢ Critical Patch",
-  "WhatsNew": "Ultrasurf vpn premium reklamsiz tÃ¼m Ã¼lkeler acik \n Guven KarataÅ ",
-  "Button1":  "GÃ¼ncelle",
+  "Title": "Update Available",
+  "Subtitle": "v4.5 • Critical Patch",
+  "WhatsNew": "•Pro\n•Reklam yok\n•Tum ulkeler acık\n• Vpn Proxy Removed\n• Guven Karatas",
+  "Button1": "Guncelle",
   "Button1Url": "https://t.me/darknes_lord",
   "2Button": false,
   "ShowTimer": false,
   "TargetTime": "2025-12-30 18:00:00"
 }
-
