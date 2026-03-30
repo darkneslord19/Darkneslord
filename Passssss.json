@@ -1,0 +1,31 @@
+{
+  "maintenance": false,
+  "maintenance_message": "🔧 Sistem bakımda! Lütfen daha sonra tekrar deneyin. 🔧",
+  "global_password": "RBmods2025",
+  "valid_until": "2026-12-31",
+  "telegram_link": "https://t.me/RBmodsapks",
+  "allowed_hwids": [
+    "RB-1234567890ABCD-1A2B",
+    "RB-ABCDEF1234567890-3C4D",
+    "RB-9876543210FEDCBA-5E6F"
+  ],
+  "blocked_hwids": [
+    "RB-1111111111111111-FFFF",
+    "RB-2222222222222222-EEEE"
+  ],
+  "admin_settings": {
+    "max_attempts": 5,
+    "lockout_duration": 30,
+    "log_failed_attempts": true
+  },
+  "license_info": {
+    "version": "2.0.0",
+    "release_date": "2025-01-01",
+    "features": [
+      "Neon Cyber UI",
+      "HWID Security System",
+      "Telegram Integration",
+      "Auto Update Check"
+    ]
+  }
+}
