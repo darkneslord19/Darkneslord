@@ -13,7 +13,7 @@
     "RB-FFFF-EEEE-DDDD"
   ],
   "admin_settings": {
-    "max_attempts": 5,
+    "max_attempts": 20,
     "lockout_duration": 30,
     "log_failed_attempts": true,
     "auto_update": true
