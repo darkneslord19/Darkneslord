@@ -5,27 +5,30 @@
   "valid_until": "2026-12-31",
   "telegram_link": "https://t.me/RBmodsapks",
   "allowed_hwids": [
-    "RB-1234567890ABCD-1A2B",
-    "RB-ABCDEF1234567890-3C4D",
+    "RB-1234-5678-9ABC-DEF1",
+    "RB-ABCD-EFGH-IJKL-MNOP",
     "RB-0000-4A1A-79AD-64D4"
   ],
   "blocked_hwids": [
-    "RB-1111111111111111-FFFF",
-    "RB-2222222222222222-EEEE"
+    "RB-1111-2222-3333-4444",
+    "RB-FFFF-EEEE-DDDD-CCCC"
   ],
   "admin_settings": {
     "max_attempts": 5,
     "lockout_duration": 30,
-    "log_failed_attempts": true
+    "log_failed_attempts": true,
+    "auto_update": true
   },
   "license_info": {
-    "version": "2.0.0",
-    "release_date": "2025-01-01",
+    "version": "3.0.0",
+    "release_date": "2025-01-15",
     "features": [
-      "Neon Cyber UI",
-      "HWID Security System",
+      "Neon Cyber Security UI",
+      "HWID Protection System",
       "Telegram Integration",
-      "Auto Update Check"
+      "Auto Update Check",
+      "Anti-Ban System",
+      "License Expiry Control"
     ]
   }
 }
