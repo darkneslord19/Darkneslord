@@ -1,5 +1,5 @@
 {
-  "maintenance": true,
+  "maintenance": false,
   "maintenance_message": "🔧 Sistem bakımda! Lütfen daha sonra tekrar deneyin. 🔧",
   "global_password": "darknes",
   "valid_until": "2026-12-31",
