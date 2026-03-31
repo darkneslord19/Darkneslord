@@ -7,7 +7,7 @@
   "allowed_hwids": [
     "RB-1234567890ABCD-1A2B",
     "RB-ABCDEF1234567890-3C4D",
-    "RB-9876543210FEDCBA-5E6F"
+    "RB-0000-4A1A-79AD-64D4"
   ],
   "blocked_hwids": [
     "RB-1111111111111111-FFFF",
