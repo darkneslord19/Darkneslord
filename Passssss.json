@@ -5,12 +5,12 @@
   "valid_until": "2026-12-31",
   "telegram_link": "https://t.me/RBmodsapks",
   "allowed_hwids": [
-    "RB-0000-0BC3-A263-21A8",
+    "RB-0000-0BC3-A263",
     "RB-0000-7AD1-367F"
   ],
   "blocked_hwids": [
-    "RB-1111-2222-3333-4444",
-    "RB-FFFF-EEEE-DDDD-CCCC"
+    "RB-1111-2222-3333",
+    "RB-FFFF-EEEE-DDDD"
   ],
   "admin_settings": {
     "max_attempts": 5,
