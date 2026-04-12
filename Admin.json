@@ -1,0 +1,13 @@
+{
+  "github": {
+    "token": "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",
+    "owner": "darkneslord19",
+    "repo": "darkneslord",
+    "branch": "main"
+  },
+  "settings": {
+    "maxFileSize": 10,
+    "allowedTypes": ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"],
+    "uploadFolder": "uploads"
+  }
+}
