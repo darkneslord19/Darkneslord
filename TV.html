@@ -1,788 +1,392 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Smart IPTV - TV Uyumlu</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV IPTV Player</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      margin:0; 
+      background:#0a0a0a; 
+      color:#eee; 
+      font-family: Arial, sans-serif; 
+      overflow: hidden;
+    }
+    .header {
+      background:#1f1f1f; 
+      padding:15px 20px; 
+      text-align:center; 
+      border-bottom:3px solid #e50914;
+    }
+    .playlist-input {
+      display:flex; 
+      max-width:900px; 
+      margin:10px auto; 
+      gap:10px;
+    }
+    .playlist-input input {
+      flex:1; 
+      padding:16px; 
+      font-size:17px; 
+      border-radius:8px; 
+      border:none;
+      background:#333;
+      color:white;
+    }
+    button {
+      padding:16px 28px; 
+      background:#e50914; 
+      color:white; 
+      border:none; 
+      border-radius:8px; 
+      font-weight:bold; 
+      cursor:pointer;
+      font-size:16px;
+    }
+    button:hover { background:#f40612; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0e1a;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-        }
+    .main-container {
+      display: flex;
+      height: calc(100vh - 110px);
+    }
 
-        .app {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+    /* Kategoriler Paneli (Yan) */
+    .categories-panel {
+      width: 280px;
+      background: #1a1a1a;
+      overflow-y: auto;
+      border-right: 2px solid #333;
+      padding: 15px 0;
+    }
+    .cat-item {
+      padding: 14px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-left: 4px solid transparent;
+    }
+    .cat-item:hover {
+      background: #292929;
+    }
+    .cat-item.active {
+      background: #e50914;
+      border-left: 4px solid white;
+      font-weight: bold;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #1a1f2e, #0f1320);
-            padding: 8px 12px;
-            border-bottom: 2px solid #4ecdc4;
-            flex-shrink: 0;
-        }
+    /* Kanal Listesi Paneli */
+    .channels-panel {
+      width: 380px;
+      background: #141414;
+      overflow-y: auto;
+      border-right: 1px solid #333;
+      padding: 10px;
+    }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
+    /* Player Alanı */
+    .player-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
-        .logo h1 {
-            font-size: 0.9rem;
-            color: #4ecdc4;
-        }
+    .now-playing {
+      padding: 15px;
+      background: #1f1f1f;
+      text-align: center;
+      font-size: 18px;
+      min-height: 60px;
+    }
 
-        .controls {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
+    .channel-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 10px;
+      margin: 6px 0;
+      background: #1f1f1f;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .channel-item:hover, .channel-item.focused {
+      background: #e50914;
+      transform: scale(1.03);
+    }
+    .channel-item img {
+      width: 90px;
+      height: 65px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 6px;
+    }
+    .channel-info .channel-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .channel-info .channel-group {
+      font-size: 13px;
+      color: #bbb;
+    }
 
-        select, button {
-            background: #2c3348;
-            border: none;
-            color: white;
-            padding: 5px 8px;
-            border-radius: 15px;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-
-        button {
-            background: #4ecdc4;
-            color: #0a0e1a;
-            font-weight: bold;
-        }
-
-        .main-layout {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* Kategoriler - Sol */
-        .categories-panel {
-            width: 180px;
-            background: #11161f;
-            border-right: 1px solid #2a2f3f;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .panel-header {
-            padding: 8px;
-            background: #0d1220;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #4ecdc4;
-            font-weight: bold;
-        }
-
-        .category-list {
-            padding: 5px;
-        }
-
-        .category-item {
-            padding: 6px 8px;
-            margin-bottom: 3px;
-            background: #1a1f2c;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-        }
-
-        .category-item.active {
-            background: #4ecdc4;
-            color: #0a0e1a;
-        }
-
-        /* İçerik Listesi - Orta */
-        .content-panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .content-header {
-            padding: 6px 10px;
-            background: #1a1f2c;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2a2f3f;
-        }
-
-        .content-title {
-            font-size: 0.8rem;
-            color: #4ecdc4;
-        }
-
-        .content-grid {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
-        }
-
-        /* İçerik Kartı */
-        .item-card {
-            background: #1a1f2c;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid #2a2f3f;
-        }
-
-        .item-card.active {
-            border-color: #4ecdc4;
-            box-shadow: 0 0 5px #4ecdc4;
-        }
-
-        .card-poster {
-            height: 80px;
-            background: linear-gradient(135deg, #2a2f3f, #1a1f2c);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            position: relative;
-        }
-
-        .fav-btn {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 15px;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        .card-info {
-            padding: 6px;
-        }
-
-        .card-title {
-            font-size: 0.7rem;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-cat {
-            font-size: 0.55rem;
-            color: #888;
-        }
-
-        /* Player - Sağ */
-        .player-panel {
-            width: 300px;
-            background: #000;
-            border-left: 1px solid #2a2f3f;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-
-        .video-container {
-            flex: 1;
-            position: relative;
-            background: #000;
-            min-height: 150px;
-        }
-
-        #videoPlayer {
-            width: 100%;
-            height: 100%;
-            background: black;
-        }
-
-        .video-controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(0deg, rgba(0,0,0,0.7), transparent);
-            padding: 8px;
-            display: flex;
-            gap: 8px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .video-container:hover .video-controls {
-            opacity: 1;
-        }
-
-        .ctrl-btn {
-            background: #2c3e66;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.6rem;
-        }
-
-        .now-playing {
-            padding: 8px;
-            background: #1a1f2c;
-            border-top: 1px solid #2a2f3f;
-        }
-
-        .now-label {
-            font-size: 0.6rem;
-            color: #888;
-        }
-
-        .now-name {
-            font-size: 0.75rem;
-            color: #4ecdc4;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .empty-msg {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 30px;
-            color: #888;
-            font-size: 0.8rem;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #1a1f2e;
-            padding: 20px;
-            border-radius: 12px;
-            width: 300px;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-            background: #2c3348;
-            border: none;
-            color: white;
-            border-radius: 6px;
-        }
-
-        .loading {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4ecdc4;
-            color: #0a0e1a;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            z-index: 100;
-        }
-    </style>
+    input#search {
+      width: calc(100% - 20px);
+      margin: 10px auto;
+      display: block;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #333;
+      color: white;
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-    <div class="header">
-        <div class="top-bar">
-            <div class="logo"><h1>📺 SMART IPTV</h1></div>
-            <div class="controls">
-                <select id="playlistSelect"></select>
-                <button id="addBtn">➕ Ekle</button>
-                <button id="favModeBtn">⭐ Favoriler</button>
-            </div>
-        </div>
+
+  <div class="header">
+    <h2>📺 TV IPTV Player</h2>
+    <div class="playlist-input">
+      <input type="text" id="playlistUrl" placeholder="M3U linkini buraya yapıştır (kısaltılmış link de olur)">
+      <button onclick="addPlaylist()">Ekle</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Kategoriler Yan Panel -->
+    <div class="categories-panel" id="categoriesPanel"></div>
+
+    <!-- Kanal Listesi -->
+    <div class="channels-panel">
+      <input type="text" id="search" placeholder="🔍 Kanal ara..." onkeyup="filterChannels()">
+      <div id="channelList"></div>
     </div>
 
-    <div class="main-layout">
-        <div class="categories-panel">
-            <div class="panel-header">📂 KATEGORİLER</div>
-            <div class="category-list" id="categoryList"></div>
-        </div>
-
-        <div class="content-panel">
-            <div class="content-header">
-                <span class="content-title" id="contentTitle">Tüm İçerikler</span>
-                <span id="itemCount" style="font-size:0.65rem;color:#888;">0 içerik</span>
-            </div>
-            <div class="content-grid" id="contentGrid"></div>
-        </div>
-
-        <div class="player-panel">
-            <div class="video-container">
-                <video id="videoPlayer" controls></video>
-                <div class="video-controls">
-                    <button class="ctrl-btn" id="playBtn">▶️</button>
-                    <button class="ctrl-btn" id="pauseBtn">⏸️</button>
-                    <button class="ctrl-btn" id="volUpBtn">🔊+</button>
-                    <button class="ctrl-btn" id="volDownBtn">🔉-</button>
-                </div>
-            </div>
-            <div class="now-playing">
-                <div class="now-label">📺 Şu Anda</div>
-                <div class="now-name" id="nowPlaying">Seçilmedi</div>
-            </div>
-        </div>
+    <!-- Player -->
+    <div class="player-area">
+      <video id="videoPlayer" controls autoplay></video>
+      <div class="now-playing">
+        <span id="nowPlaying">Kanal seçmek için kategoriye tıklayın veya kumanda ile gezin</span>
+      </div>
     </div>
-</div>
+  </div>
 
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <h3 style="color:#4ecdc4;margin-bottom:10px;">Yeni M3U Ekle</h3>
-        <input type="text" id="listName" placeholder="Liste Adı (örn: Filmler)">
-        <input type="text" id="listUrl" placeholder="M3U URL">
-        <div style="display:flex;gap:10px;margin-top:15px;">
-            <button id="saveListBtn" style="flex:1;background:#4ecdc4;">Kaydet</button>
-            <button id="cancelBtn" style="flex:1;background:#ff6b6b;">İptal</button>
-        </div>
-    </div>
-</div>
-
-<div id="loadingMsg" class="loading" style="display:none;">Yükleniyor...</div>
-
-<script>
-    // ==================== VERİ YAPISI ====================
+  <script>
     let playlists = [];
-    let currentPlaylistId = null;
-    let allItems = [];
-    let categories = ["Tümü"];
+    let currentChannels = [];
     let currentCategory = "Tümü";
-    let favOnly = false;
-    let favorites = new Set();
-    let currentItem = null;
-    
-    // DOM
+    let hls = null;
+    let selectedIndex = -1;
+
     const video = document.getElementById('videoPlayer');
-    const playlistSelect = document.getElementById('playlistSelect');
-    const categoryList = document.getElementById('categoryList');
-    const contentGrid = document.getElementById('contentGrid');
-    const contentTitle = document.getElementById('contentTitle');
-    const itemCountSpan = document.getElementById('itemCount');
-    const nowPlayingSpan = document.getElementById('nowPlaying');
-    const loadingDiv = document.getElementById('loadingMsg');
-    
-    // ==================== M3U AYRIŞTIRICI ====================
-    function parseM3U(content, playlistId) {
-        const lines = content.split(/\r?\n/);
-        const items = [];
-        let current = null;
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (line.startsWith('#EXTINF:')) {
-                current = {
-                    id: `${playlistId}_${i}_${Math.random()}`,
-                    name: "İsimsiz",
-                    category: "Diğer",
-                    url: "",
-                    logo: ""
-                };
-                
-                // Kategori
-                const groupMatch = line.match(/group-title=["']([^"']*)["']/);
-                if (groupMatch && groupMatch[1]) {
-                    current.category = groupMatch[1];
-                }
-                
-                // Logo
-                const logoMatch = line.match(/tvg-logo=["']([^"']*)["']/);
-                if (logoMatch && logoMatch[1]) {
-                    current.logo = logoMatch[1];
-                }
-                
-                // İsim
-                const lastComma = line.lastIndexOf(',');
-                if (lastComma !== -1) {
-                    let name = line.substring(lastComma + 1).trim();
-                    name = name.replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').trim();
-                    if (name) current.name = name;
-                }
-            } else if (line && !line.startsWith('#') && current) {
-                if (line.startsWith('http')) {
-                    current.url = line;
-                    items.push({...current});
-                }
-                current = null;
-            }
+    const categoriesPanel = document.getElementById('categoriesPanel');
+    const channelListEl = document.getElementById('channelList');
+    const nowPlaying = document.getElementById('nowPlaying');
+
+    async function parseM3U(text) {
+      const lines = text.split('\n');
+      const channels = [];
+      let current = {};
+
+      for (let line of lines) {
+        line = line.trim();
+        if (line.startsWith('#EXTINF:')) {
+          current = {};
+          const logo = line.match(/tvg-logo="([^"]*)"/i);
+          const group = line.match(/group-title="([^"]*)"/i);
+          const name = line.match(/,(.+)$/);
+
+          current.logo = logo ? logo[1] : '';
+          current.group = group ? group[1] : 'Diğer';
+          current.name = name ? name[1].trim() : 'Bilinmeyen Kanal';
+        } else if (line && !line.startsWith('#') && current.name) {
+          current.url = line;
+          channels.push({ ...current });
+          current = {};
         }
-        return items;
+      }
+      return channels;
     }
-    
-    // ==================== PLAYLIST YÜKLEME ====================
-    function showLoading(show) {
-        loadingDiv.style.display = show ? 'block' : 'none';
+
+    async function addPlaylist() {
+      const url = document.getElementById('playlistUrl').value.trim();
+      if (!url) return alert("Lütfen bir M3U linki girin!");
+
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const channels = await parseM3U(text);
+
+        const name = `Playlist ${playlists.length + 1}`;
+        playlists.push({ name, url, channels });
+
+        alert(`${channels.length} kanal yüklendi!`);
+        loadPlaylist(playlists.length - 1);
+      } catch (e) {
+        alert("Playlist yüklenemedi!\nBazı kısaltılmış linklerde CORS sorunu olabilir.\n\n" + e.message);
+      }
     }
-    
-    async function fetchM3U(url) {
-        showLoading(true);
-        try {
-            // CORS'u aşmak için no-cors modu deneyelim
-            const response = await fetch(url, {
-                mode: 'cors',
-                headers: { 'Accept': 'text/plain, */*' }
-            });
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const text = await response.text();
-            showLoading(false);
-            return text;
-        } catch (error) {
-            showLoading(false);
-            console.error('Fetch hatası:', error);
-            throw new Error('M3U dosyası okunamadı: ' + error.message);
-        }
+
+    function loadPlaylist(index) {
+      currentChannels = playlists[index].channels;
+      currentCategory = "Tümü";
+      selectedIndex = 0;
+      renderCategories();
+      renderChannels();
+      focusChannel(0);
     }
-    
-    async function loadPlaylist(playlist) {
-        if (!playlist.url) return false;
-        
-        try {
-            const content = await fetchM3U(playlist.url);
-            const items = parseM3U(content, playlist.id);
-            
-            playlist.items = items;
-            
-            // Kategorileri oluştur
-            const catSet = new Set();
-            catSet.add("Tümü");
-            items.forEach(item => {
-                if (item.category && item.category !== "Diğer") {
-                    catSet.add(item.category);
-                }
-            });
-            playlist.categories = Array.from(catSet);
-            
-            savePlaylists();
-            return true;
-        } catch (error) {
-            console.error('M3U yükleme hatası:', error);
-            playlist.items = [];
-            playlist.categories = ["Tümü"];
-            return false;
-        }
-    }
-    
-    async function switchPlaylist(playlistId) {
-        const playlist = playlists.find(p => p.id == playlistId);
-        if (!playlist) return;
-        
-        currentPlaylistId = playlistId;
-        
-        if (!playlist.items) {
-            await loadPlaylist(playlist);
-        }
-        
-        allItems = playlist.items || [];
-        categories = playlist.categories || ["Tümü"];
-        currentCategory = "Tümü";
-        favOnly = false;
-        
-        loadFavorites();
-        renderCategories();
-        renderContent();
-        updatePlaylistSelect();
-        
-        document.getElementById('favModeBtn').innerHTML = "⭐ Favoriler";
-        contentTitle.innerHTML = "Tüm İçerikler";
-    }
-    
-    // ==================== FAVORİLER ====================
-    function loadFavorites() {
-        const key = `fav_${currentPlaylistId}`;
-        const stored = localStorage.getItem(key);
-        if (stored) {
-            try { favorites = new Set(JSON.parse(stored)); }
-            catch(e) { favorites.clear(); }
-        } else {
-            favorites.clear();
-        }
-    }
-    
-    function saveFavorites() {
-        if (currentPlaylistId) {
-            const key = `fav_${currentPlaylistId}`;
-            localStorage.setItem(key, JSON.stringify([...favorites]));
-        }
-    }
-    
-    function toggleFavorite(id, event) {
-        if (event) event.stopPropagation();
-        if (favorites.has(id)) favorites.delete(id);
-        else favorites.add(id);
-        saveFavorites();
-        renderContent();
-    }
-    
-    // ==================== RENDER KATEGORİLER ====================
+
     function renderCategories() {
-        categoryList.innerHTML = '';
-        categories.forEach(cat => {
-            const count = cat === "Tümü" ? allItems.length : allItems.filter(i => i.category === cat).length;
-            const div = document.createElement('div');
-            div.className = 'category-item';
-            if (currentCategory === cat) div.classList.add('active');
-            div.innerHTML = `<span>${cat}</span><span style="font-size:0.6rem;">${count}</span>`;
-            div.onclick = () => {
-                currentCategory = cat;
-                favOnly = false;
-                document.getElementById('favModeBtn').innerHTML = "⭐ Favoriler";
-                contentTitle.innerHTML = cat === "Tümü" ? "Tüm İçerikler" : cat;
-                renderCategories();
-                renderContent();
-            };
-            categoryList.appendChild(div);
-        });
+      categoriesPanel.innerHTML = '';
+
+      // "Tümü" butonu
+      const all = document.createElement('div');
+      all.className = `cat-item ${currentCategory === "Tümü" ? "active" : ""}`;
+      all.textContent = "📺 TÜMÜ";
+      all.onclick = () => {
+        currentCategory = "Tümü";
+        renderCategories();
+        renderChannels();
+      };
+      categoriesPanel.appendChild(all);
+
+      // Diğer kategoriler
+      const groups = {};
+      currentChannels.forEach(ch => {
+        groups[ch.group] = (groups[ch.group] || 0) + 1;
+      });
+
+      Object.keys(groups).sort().forEach(group => {
+        const div = document.createElement('div');
+        div.className = `cat-item ${currentCategory === group ? "active" : ""}`;
+        div.textContent = `${group} (${groups[group]})`;
+        div.onclick = () => {
+          currentCategory = group;
+          renderCategories();
+          renderChannels();
+        };
+        categoriesPanel.appendChild(div);
+      });
     }
-    
-    // ==================== RENDER İÇERİK ====================
-    function renderContent() {
-        contentGrid.innerHTML = '';
-        
-        let filtered = allItems.filter(item => {
-            if (currentCategory !== "Tümü" && item.category !== currentCategory) return false;
-            if (favOnly && !favorites.has(item.id)) return false;
-            return true;
-        });
-        
-        itemCountSpan.innerHTML = `${filtered.length} içerik`;
-        
-        if (filtered.length === 0) {
-            contentGrid.innerHTML = '<div class="empty-msg">📭 İçerik bulunamadı</div>';
-            return;
-        }
-        
-        filtered.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'item-card';
-            if (currentItem && currentItem.id === item.id) card.classList.add('active');
-            
-            card.innerHTML = `
-                <div class="card-poster">
-                    <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">🎬</div>
-                    <div class="fav-btn" data-id="${item.id}">${favorites.has(item.id) ? '⭐' : '☆'}</div>
-                </div>
-                <div class="card-info">
-                    <div class="card-title">${escapeHtml(item.name.substring(0, 35))}</div>
-                    <div class="card-cat">📁 ${escapeHtml(item.category)}</div>
-                </div>
-            `;
-            
-            card.onclick = (e) => {
-                if (!e.target.classList.contains('fav-btn')) {
-                    playItem(item);
-                }
-            };
-            
-            const favBtn = card.querySelector('.fav-btn');
-            favBtn.onclick = (e) => {
-                e.stopPropagation();
-                toggleFavorite(item.id, e);
-            };
-            
-            contentGrid.appendChild(card);
-        });
+
+    function renderChannels() {
+      channelListEl.innerHTML = '';
+      const filtered = currentCategory === "Tümü" 
+        ? currentChannels 
+        : currentChannels.filter(ch => ch.group === currentCategory);
+
+      filtered.forEach((channel, idx) => {
+        const div = document.createElement('div');
+        div.className = 'channel-item';
+        div.innerHTML = `
+          ${channel.logo ? 
+            `<img src="${channel.logo}" onerror="this.src='https://via.placeholder.com/90x65/333/fff?text=TV'">` : 
+            `<img src="https://via.placeholder.com/90x65/333/fff?text=TV">`}
+          <div class="channel-info">
+            <div class="channel-name">${channel.name}</div>
+            <div class="channel-group">${channel.group}</div>
+          </div>
+        `;
+        div.onclick = () => playChannel(channel);
+        channelListEl.appendChild(div);
+      });
     }
-    
-    // ==================== OYNATMA ====================
-    function playItem(item) {
-        if (!item || !item.url) return;
-        currentItem = item;
-        video.src = item.url;
-        video.load();
-        
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(e => console.log('Oynatma engellendi:', e));
-        }
-        
-        nowPlayingSpan.innerHTML = escapeHtml(item.name);
-        renderContent();
+
+    function filterChannels() {
+      const term = document.getElementById('search').value.toLowerCase().trim();
+      if (!term) {
+        renderChannels();
+        return;
+      }
+
+      channelListEl.innerHTML = '';
+      const filtered = currentChannels.filter(ch => 
+        ch.name.toLowerCase().includes(term) || 
+        ch.group.toLowerCase().includes(term)
+      );
+
+      filtered.forEach(channel => {
+        const div = document.createElement('div');
+        div.className = 'channel-item';
+        div.innerHTML = `
+          ${channel.logo ? `<img src="${channel.logo}" onerror="this.src='https://via.placeholder.com/90x65/333/fff?text=TV'">` : `<img src="https://via.placeholder.com/90x65/333/fff?text=TV">`}
+          <div class="channel-info">
+            <div class="channel-name">${channel.name}</div>
+            <div class="channel-group">${channel.group}</div>
+          </div>
+        `;
+        div.onclick = () => playChannel(channel);
+        channelListEl.appendChild(div);
+      });
     }
-    
-    // ==================== FAVORİ MODU ====================
-    function toggleFavMode() {
-        favOnly = !favOnly;
-        const btn = document.getElementById('favModeBtn');
-        if (favOnly) {
-            btn.innerHTML = "🌟 Tümü";
-            contentTitle.innerHTML = "⭐ Favorilerim";
+
+    function playChannel(channel) {
+      nowPlaying.textContent = `Şimdi oynuyor: ${channel.name}`;
+
+      if (hls) {
+        hls.destroy();
+        hls = null;
+      }
+
+      if (channel.url.includes('m3u8')) {
+        if (Hls.isSupported()) {
+          hls = new Hls();
+          hls.loadSource(channel.url);
+          hls.attachMedia(video);
         } else {
-            btn.innerHTML = "⭐ Favoriler";
-            contentTitle.innerHTML = currentCategory === "Tümü" ? "Tüm İçerikler" : currentCategory;
+          video.src = channel.url;
         }
-        renderContent();
+      } else {
+        video.src = channel.url;
+      }
+      video.play().catch(() => {});
     }
-    
-    // ==================== PLAYER KONTROLLERİ ====================
-    function changeVolume(delta) {
-        let vol = video.volume + delta;
-        if (vol > 1) vol = 1;
-        if (vol < 0) vol = 0;
-        video.volume = vol;
+
+    // ====================== KUMANDA DESTEĞİ ======================
+    function focusChannel(index) {
+      const items = channelListEl.querySelectorAll('.channel-item');
+      items.forEach((item, i) => item.classList.toggle('focused', i === index));
+      selectedIndex = index;
+      if (items[index]) items[index].scrollIntoView({ behavior: "smooth", block: "center" });
     }
-    
-    // ==================== PLAYLIST YÖNETİMİ ====================
-    function savePlaylists() {
-        const toSave = playlists.map(p => ({
-            id: p.id,
-            name: p.name,
-            url: p.url,
-            categories: p.categories
-        }));
-        localStorage.setItem('iptv_lists', JSON.stringify(toSave));
-    }
-    
-    function loadPlaylists() {
-        const stored = localStorage.getItem('iptv_lists');
-        if (stored) {
-            try {
-                const loaded = JSON.parse(stored);
-                playlists = loaded.map(p => ({ ...p, items: null }));
-            } catch(e) { playlists = []; }
+
+    document.addEventListener('keydown', (e) => {
+      const items = channelListEl.querySelectorAll('.channel-item');
+      if (items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        focusChannel((selectedIndex + 1) % items.length);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        focusChannel((selectedIndex - 1 + items.length) % items.length);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (selectedIndex >= 0 && items[selectedIndex]) {
+          items[selectedIndex].click();
         }
-        
-        if (playlists.length === 0) {
-            playlists = [{
-                id: "1",
-                name: "Türkiye",
-                url: "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/tr.m3u",
-                items: null,
-                categories: ["Tümü"]
-            }];
-            savePlaylists();
-        }
-    }
-    
-    function updatePlaylistSelect() {
-        playlistSelect.innerHTML = '';
-        playlists.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = `${p.name} (${p.items ? p.items.length : '?'})`;
-            if (currentPlaylistId == p.id) opt.selected = true;
-            playlistSelect.appendChild(opt);
-        });
-    }
-    
-    function addPlaylist(name, url) {
-        const newId = Date.now().toString();
-        playlists.push({
-            id: newId,
-            name: name,
-            url: url,
-            items: null,
-            categories: ["Tümü"]
-        });
-        savePlaylists();
-        updatePlaylistSelect();
-        switchPlaylist(newId);
-    }
-    
-    function refreshPlaylist() {
-        if (currentPlaylistId) {
-            const pl = playlists.find(p => p.id == currentPlaylistId);
-            if (pl) {
-                pl.items = null;
-                switchPlaylist(currentPlaylistId);
-            }
-        }
-    }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
-    }
-    
-    // ==================== KUMANDA ====================
-    function handleRemote(e) {
-        const key = e.key;
-        switch(key) {
-            case 'ArrowUp': e.preventDefault(); changeVolume(0.1); break;
-            case 'ArrowDown': e.preventDefault(); changeVolume(-0.1); break;
-            case 'ArrowLeft': e.preventDefault(); video.currentTime -= 10; break;
-            case 'ArrowRight': e.preventDefault(); video.currentTime += 10; break;
-            case 'Enter': e.preventDefault(); video.paused ? video.play() : video.pause(); break;
-            case 'f': case 'F': e.preventDefault(); toggleFavMode(); break;
-        }
-    }
-    
-    // ==================== BAŞLAT ====================
-    function init() {
-        loadPlaylists();
-        updatePlaylistSelect();
-        
-        playlistSelect.onchange = () => switchPlaylist(playlistSelect.value);
-        document.getElementById('addBtn').onclick = () => {
-            document.getElementById('modal').style.display = 'flex';
-        };
-        document.getElementById('favModeBtn').onclick = toggleFavMode;
-        document.getElementById('playBtn').onclick = () => video.play();
-        document.getElementById('pauseBtn').onclick = () => video.pause();
-        document.getElementById('volUpBtn').onclick = () => changeVolume(0.1);
-        document.getElementById('volDownBtn').onclick = () => changeVolume(-0.1);
-        
-        document.getElementById('saveListBtn').onclick = () => {
-            const name = document.getElementById('listName').value.trim();
-            const url = document.getElementById('listUrl').value.trim();
-            if (name && url) {
-                addPlaylist(name, url);
-                document.getElementById('modal').style.display = 'none';
-                document.getElementById('listName').value = '';
-                document.getElementById('listUrl').value = '';
-            } else {
-                alert('Ad ve URL girin!');
-            }
-        };
-        
-        document.getElementById('cancelBtn').onclick = () => {
-            document.getElementById('modal').style.display = 'none';
-        };
-        
-        window.addEventListener('keydown', handleRemote);
-        
-        if (playlists.length > 0) {
-            switchPlaylist(playlists[0].id);
-        }
-    }
-    
-    init();
-</script>
+      } else if (e.key === "f" || e.key === "F") {
+        if (!document.fullscreenElement) video.requestFullscreen();
+        else document.exitFullscreen();
+      } else if (e.key === "ArrowRight") {
+        video.volume = Math.min(1, video.volume + 0.1);
+      } else if (e.key === "ArrowLeft") {
+        video.volume = Math.max(0, video.volume - 0.1);
+      }
+    });
+
+    // Sayfa yüklendiğinde
+    window.onload = () => {
+      // Test için istersen buraya örnek link koy:
+      // document.getElementById('playlistUrl').value = "https://example.com/playlist.m3u";
+    };
+  </script>
 </body>
 </html>
