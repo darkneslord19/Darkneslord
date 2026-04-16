@@ -3,8 +3,9 @@
   "version": "1.0",
   "lastUpdated": "2024-01-01T00:00:00.000Z",
   "playlists": [
-    { "name": "Darknes", "url": "https://tinyurl.com/FanatikplayFilm" },
-    { "name": "Lord", "url": "http://lord.m3u8" },
-    { "name": "VIP List", "url": "http://vip.m3u" }
+    { "name": "Darknes-Film", "url": "https://tinyurl.com/FanatikplayFilm" },
+    { "name": "Darknes-Dizi", "url": "https://tinyurl.com/FanatikPlayDizi" },
+    { "name": "Darknes-Canli", "url": "https://tinyurl.com/FanatikplaySport" },
+ { "name": "Darknes-Vip", "url": "https://tinyurl.com/2ao2rans" }
   ]
 }
