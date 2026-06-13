@@ -12,7 +12,7 @@
     "anti_vpn": false,
     "anti_hooking": false,
     "signature_check": false,
-    "original_signature": "YAHAN_APNA_SHA256_DAALEIN"
+    "original_signature": "A40DA80A59D170CAA950CF15C18C454D47A39B26989D8B640ECD745BA71BF5DC"
   },
   "devices": {
     "DEV-ABCDE12345": {
