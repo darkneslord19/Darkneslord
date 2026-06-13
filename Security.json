@@ -9,7 +9,7 @@
     "anti_debug": false,
     "anti_root": false,
     "anti_emulator": false,
-    "anti_vpn": false,
+    "anti_vpn": true,
     "anti_hooking": false,
     "signature_check": true,
     "original_signature": "Dark"
