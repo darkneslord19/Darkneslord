@@ -17,7 +17,7 @@
   "devices": {
     "DEV-7CE2CD4916": {
       "login_key": "DARK",
-      "active": true
+      "active": false
     },
     "DEV-1E256221B2": {
       "login_key": "KEYKEY",
