@@ -11,17 +11,13 @@
     "anti_emulator": false,
     "anti_vpn": false,
     "anti_hooking": false,
-    "signature_check": true,
+    "signature_check": false,
     "original_signature": "Dark"
   },
   "devices": {
     "DEV-7CE2CD4916": {
       "login_key": "DARK",
       "active": true
-    },
-    "DEV-1E256221B2": {
-      "login_key": "KEYKEY",
-      "active": false
     }
   }
 }
