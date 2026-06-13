@@ -2,7 +2,7 @@
   "settings": {
     "app_version": 1,
     "update_url": "https://your-download-link.com/app.apk",
-    "blacklisted_apps": "com.rizal.ads.regex",
+    "blacklisted_apps": "",
     "telegram_url": "https://t.me/darknes_lord"
   },
   "security_toggles": {
