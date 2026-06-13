@@ -11,7 +11,7 @@
     "anti_emulator": false,
     "anti_vpn": true,
     "anti_hooking": false,
-    "signature_check": true,
+    "signature_check": false,
     "original_signature": "Dark"
   },
   "devices": {
