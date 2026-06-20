@@ -4,7 +4,7 @@
     "username": "smngn",
     "password": "aliali",
     "expiresAt": "2026-12-31",
-    "allowOffline": false
+    "allowOffline": dark
   },
   {
     "id": "android_device_id_2",
