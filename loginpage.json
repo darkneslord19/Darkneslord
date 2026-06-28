@@ -12,7 +12,7 @@
     "matrix": false
   },
   "maintenance": {
-    "active": true,
+    "active": false,
     "title": "Bakımdayız",
     "message": "Sistem şu anda bakımda.\nLütfen daha sonra tekrar deneyin."
   },
