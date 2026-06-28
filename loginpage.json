@@ -3,7 +3,7 @@
     {
       "username": "admin",
       "password": "1234",
-      "banned": true
+      "banned": false
     },
     {
       "username": "ali",
@@ -17,6 +17,6 @@
     "title": "Güncelleme",
     "changes": "- Yeni gece teması eklendi\n- Beni hatırla özelliği geldi\n- Çeşitli hata düzeltmeleri",
     "url": "https://ornek.com/yeni-surum",
-    "force": false
+    "force": true
   }
 }
