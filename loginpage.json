@@ -6,10 +6,10 @@
     "kirmizi": false,
     "yesil": false,
     "gunbatimi": false,
-    "altin": false,
+    "altin": true,
     "okyanus": false,
     "gul": false,
-    "matrix": true
+    "matrix": false
   },
   "users": [
     {
