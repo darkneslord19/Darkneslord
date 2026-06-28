@@ -17,7 +17,7 @@
     "message": "Sistem şu anda bakımda.\nLütfen daha sonra tekrar deneyin."
   },
   "announcement": {
-    "active": true,
+    "active": false,
     "text": "Hoş geldiniz! Yeni güncellemeler yakında geliyor.",
     "scroll": true
   },
