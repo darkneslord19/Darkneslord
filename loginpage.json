@@ -1,12 +1,12 @@
 {
   "themes": {
     "komur": false,
-    "mor": false,
+    "mor": true,
     "mavi": false,
     "kirmizi": false,
     "yesil": false,
     "gunbatimi": false,
-    "altin": true,
+    "altin": false,
     "okyanus": false,
     "gul": false,
     "matrix": false
