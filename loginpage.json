@@ -7,8 +7,8 @@
     "yesil": false,
     "gunbatimi": false,
     "altin": false,
-    "okyanus": false,
-    "gul": true,
+    "okyanus": true,
+    "gul": false,
     "matrix": false
   },
   "users": [
