@@ -1,7 +1,15 @@
 {
   "users": [
-    { "username": "admin", "password": "1234", "banned": false },
-    { "username": "ali", "password": "abcd", "banned": false }
+    {
+      "username": "admin",
+      "password": "1234",
+      "banned": true
+    },
+    {
+      "username": "ali",
+      "password": "abcd",
+      "banned": false
+    }
   ],
   "banned": [],
   "update": {
