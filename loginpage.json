@@ -13,7 +13,7 @@
   ],
   "banned": [],
   "update": {
-    "active": true,
+    "active": false,
     "title": "Güncelleme",
     "changes": "- Yeni gece teması eklendi\n- Beni hatırla özelliği geldi\n- Çeşitli hata düzeltmeleri",
     "url": "https://ornek.com/yeni-surum",
