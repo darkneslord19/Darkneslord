@@ -1,6 +1,6 @@
 {
   "themes": {
-    "komur": true,
+    "komur": false,
     "mor": false,
     "mavi": false,
     "kirmizi": false,
@@ -8,12 +8,20 @@
     "gunbatimi": false,
     "altin": false,
     "okyanus": false,
-    "gul": false,
+    "gul": true,
     "matrix": false
   },
   "users": [
-    { "username": "admin", "password": "1234", "banned": false },
-    { "username": "ali", "password": "abcd", "banned": false }
+    {
+      "username": "admin",
+      "password": "1234",
+      "banned": false
+    },
+    {
+      "username": "ali",
+      "password": "abcd",
+      "banned": false
+    }
   ],
   "banned": [],
   "update": {
