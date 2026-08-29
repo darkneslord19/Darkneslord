@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Encryptor</title>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark: #0a0a0a;
+            --gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        body {
+            background: var(--gradient);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid var(--gold);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 { color: var(--gold); text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--gold); font-weight: bold; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--gold);
+            border: none;
+            border-radius: 8px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Encryptor V1</h2>
+        <div class="input-group">
+            <label>1. Resim Seç (logo.png)</label>
+            <input type="file" id="imageInput" accept="image/png">
+        </div>
+        <div class="input-group">
+            <label>2. Veri (key=value|...)</label>
+            <textarea id="dataInput" placeholder="key=deger|key2=deger2"></textarea>
+        </div>
+        <button onclick="processImage()">OLUŞTUR VE İNDİR</button>
+    </div>
+
+    <script>
+        function processImage() {
+            const file = document.getElementById('imageInput').files[0];
+            const secret = document.getElementById('dataInput').value;
+            if (!file || !secret) return alert("Dosya ve veri gerekli!");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = new Uint8Array(e.target.result);
+                const encoded = btoa(unescape(encodeURIComponent(secret)));
+                const marker = ">>>D<<<" + encoded;
+                const markerBytes = new TextEncoder().encode(marker);
+
+                const finalBlob = new Blob([imageData, markerBytes], {type: "image/png"});
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(finalBlob);
+                a.download = "logo.png";
+                a.click();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>
