@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AES Mobil Şifreleyici</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
+        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        textarea, input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 16px; background: #007bff; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .output { margin-top: 20px; padding: 15px; background: #272822; color: #00ff00; border-radius: 10px; word-break: break-all; min-height: 50px; font-family: monospace; border: 1px solid #444; }
+        .hint { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AES Şifreleyici</h2>
+    <input type="text" id="key" value="1234567890ABCDEF" placeholder="Anahtar (16 Karakter)">
+    <textarea id="input" rows="4" placeholder="Şifrelenecek veriyi buraya yaz..."></textarea>
+    <button onclick="encryptData()">Şifrele</button>
+    
+    <div class="output" id="result" onclick="copyResult()">Sonuç burada görünecek...</div>
+    <p class="hint">Kopyalamak için kutucuğa dokun.</p>
+</div>
+
+<script>
+    function encryptData() {
+        const text = document.getElementById('input').value;
+        const keyStr = document.getElementById('key').value;
+        const key = CryptoJS.enc.Utf8.parse(keyStr.padEnd(16, '\0').substring(0, 16));
+        const iv = CryptoJS.lib.WordArray.random(16);
+        
+        const encrypted = CryptoJS.AES.encrypt(text, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
+
+        const combined = iv.concat(encrypted.ciphertext);
+        document.getElementById('result').innerText = CryptoJS.enc.Base64.stringify(combined);
+    }
+
+    function copyResult() {
+        const text = document.getElementById('result').innerText;
+        if(text.length > 20) {
+            navigator.clipboard.writeText(text);
+            alert("Veri panoya kopyalandı!");
+        }
+    }
+</script>
+</body>
+</html>
