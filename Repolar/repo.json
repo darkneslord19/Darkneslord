@@ -2,5 +2,9 @@
   {
     "name": "ŞafakStream",
     "url": "https://raw.githubusercontent.com/SafakStream/SafakStream/builds/repo.json"
+  },
+  {
+    "name": "Manitux",
+    "url": "https://raw.githubusercontent.com/manitux-app/cs-plugins/refs/heads/main/repo.json"
   }
 ]
